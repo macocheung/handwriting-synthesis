@@ -118,6 +118,18 @@ curl "http://localhost:5000/handwrite?text=Hello%20World" > out.svg
 Optional query parameters `style` and `bias` may be provided to control the
 appearance of the generated text.
 
+To generate multiple images in one request, use the batch endpoint. Send a
+JSON payload containing a `texts` list. Optional `styles` and `biases` lists can
+be provided to control the appearance of each item.
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+     -d '{"texts": ["Hello", "World"]}' \
+     http://localhost:5000/handwrite_batch > out.zip
+```
+
+The response is a zip file containing one SVG for each input string.
+
 ## Contribute
 
 All Pull Requests and packaging  are welcome
