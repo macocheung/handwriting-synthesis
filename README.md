@@ -89,6 +89,18 @@ with the last verse being unbiased.
 A pretrained model is included, but if you'd like to train your own,
 read [these instructions](model/README.md)
 
+## Docker
+
+You can run the demo without setting up a local Python environment by building
+the provided Docker image.  From the repository root run:
+
+```bash
+docker build -t handwriting-synthesis .
+docker run --rm -v $(pwd)/img:/app/img handwriting-synthesis
+```
+
+The generated SVG samples will appear in the `img/` directory.
+
 ## Contribute
 
 All Pull Requests and packaging  are welcome
