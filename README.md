@@ -92,14 +92,31 @@ read [these instructions](model/README.md)
 ## Docker
 
 You can run the demo without setting up a local Python environment by building
-the provided Docker image.  From the repository root run:
+the provided Docker image. From the repository root run:
 
 ```bash
 docker build -t handwriting-synthesis .
 docker run --rm -v $(pwd)/img:/app/img handwriting-synthesis
 ```
-
 The generated SVG samples will appear in the `img/` directory.
+
+### Web API
+
+The Docker image now exposes a simple web API. Start the container and map the
+port to your host:
+
+```bash
+docker run --rm -p 5000:5000 handwriting-synthesis
+```
+
+You can then request handwriting synthesis via HTTP:
+
+```bash
+curl "http://localhost:5000/handwrite?text=Hello%20World" > out.svg
+```
+
+Optional query parameters `style` and `bias` may be provided to control the
+appearance of the generated text.
 
 ## Contribute
 

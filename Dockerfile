@@ -11,5 +11,8 @@ RUN pip install --no-cache-dir --upgrade pip \
 # Copy application code
 COPY . .
 
+# Expose API port
+EXPOSE 5000
+
 # Default command
-CMD ["python", "main.py"]
+CMD ["python", "api.py"]
