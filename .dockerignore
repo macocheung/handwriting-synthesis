@@ -1,0 +1,11 @@
+.git
+.github
+__pycache__
+venv
+logs
+predictions
+img
+model/data/raw
+model/data/processed
+.idea
+
