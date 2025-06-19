@@ -109,26 +109,30 @@ port to your host:
 docker run --rm -p 5000:5000 handwriting-synthesis
 ```
 
-You can then request handwriting synthesis via HTTP:
+You can then request handwriting synthesis via HTTP. By default the API
+returns SVG images, but PNG output can be requested with the `format`
+parameter:
 
 ```bash
-curl "http://localhost:5000/handwrite?text=Hello%20World" > out.svg
+curl "http://localhost:5000/handwrite?text=Hello%20World&format=png" > out.png
 ```
 
 Optional query parameters `style` and `bias` may be provided to control the
 appearance of the generated text.
 
 To generate multiple images in one request, use the batch endpoint. Send a
-JSON payload containing a `texts` list. Optional `styles` and `biases` lists can
-be provided to control the appearance of each item.
+JSON payload containing a `texts` list. Optional `styles`, `biases` and
+`format` fields can be provided to control the appearance of each item and
+the returned image type.
 
 ```bash
 curl -X POST -H "Content-Type: application/json" \
-     -d '{"texts": ["Hello", "World"]}' \
+     -d '{"texts": ["Hello", "World"], "format": "png"}' \
      http://localhost:5000/handwrite_batch > out.zip
 ```
 
-The response is a zip file containing one SVG for each input string.
+The response is a zip file containing one image for each input string in
+the requested format.
 
 ## Contribute
 

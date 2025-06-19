@@ -3,6 +3,7 @@ from handwriting_synthesis import Hand
 import tempfile
 import os
 import zipfile
+import cairosvg
 
 app = Flask(__name__)
 hand = Hand()
@@ -15,6 +16,10 @@ def handwrite():
         return jsonify({'error': 'text parameter required'}), 400
 
     lines = text.split('\n')
+
+    fmt = request.args.get('format', 'svg').lower()
+    if fmt not in ('svg', 'png'):
+        return jsonify({'error': 'format must be svg or png'}), 400
 
     style = request.args.get('style')
     bias = request.args.get('bias')
@@ -38,6 +43,10 @@ def handwrite():
 
     with tempfile.NamedTemporaryFile(suffix='.svg', delete=False) as tmp:
         tmp_filename = tmp.name
+    if fmt == 'png':
+        png_tmp = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
+        png_filename = png_tmp.name
+        png_tmp.close()
 
     try:
         hand.write(
@@ -46,10 +55,16 @@ def handwrite():
             biases=biases,
             styles=styles
         )
-        return send_file(tmp_filename, mimetype='image/svg+xml')
+        if fmt == 'png':
+            cairosvg.svg2png(url=tmp_filename, write_to=png_filename)
+            return send_file(png_filename, mimetype='image/png')
+        else:
+            return send_file(tmp_filename, mimetype='image/svg+xml')
     finally:
         if os.path.exists(tmp_filename):
             os.remove(tmp_filename)
+        if fmt == 'png' and os.path.exists(png_filename):
+            os.remove(png_filename)
 
 
 @app.route('/handwrite_batch', methods=['POST'])
@@ -61,6 +76,10 @@ def handwrite_batch():
     texts = data['texts']
     if not isinstance(texts, list) or len(texts) == 0:
         return jsonify({'error': 'texts must be a non-empty list'}), 400
+
+    fmt = data.get('format', 'svg').lower()
+    if fmt not in ('svg', 'png'):
+        return jsonify({'error': 'format must be svg or png'}), 400
 
     style_param = data.get('styles')
     bias_param = data.get('biases')
@@ -106,7 +125,13 @@ def handwrite_batch():
                 biases=biases,
                 styles=styles
             )
-            filenames.append(out_file)
+            if fmt == 'png':
+                png_file = os.path.join(temp_dir, f'{idx}.png')
+                cairosvg.svg2png(url=out_file, write_to=png_file)
+                filenames.append(png_file)
+                os.remove(out_file)
+            else:
+                filenames.append(out_file)
 
         zip_filename = tempfile.NamedTemporaryFile(suffix='.zip', delete=False).name
         with zipfile.ZipFile(zip_filename, 'w') as zf:
