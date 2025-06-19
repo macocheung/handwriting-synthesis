@@ -6,3 +6,4 @@ svgwrite>=1.1.12
 tensorflow==2.12.0
 tensorflow-probability==0.20.1
 flask==2.2.5
+cairosvg>=2.5.2
