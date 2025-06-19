@@ -45,7 +45,10 @@ def _draw(strokes, lines, filename, stroke_colors=None, stroke_widths=None):
     width = max_x - min_x
     height = max_y - min_y
 
-    dwg = svgwrite.Drawing(filename=filename)
+    dwg = svgwrite.Drawing(
+        filename=filename,
+        size=(f"{width}px", f"{height}px")
+    )
     dwg.viewbox(width=width, height=height)
     dwg.add(dwg.rect(insert=(0, 0), size=(width, height), fill='white'))
 
